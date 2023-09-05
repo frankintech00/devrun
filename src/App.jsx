@@ -1,7 +1,13 @@
 import React from "react";
+import SignUp from "./pages/signUp";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
-  return <h1 className="text-3xl font-bold underline">Hello world!</h1>;
+  return (
+    <AuthProvider>
+      <SignUp />;
+    </AuthProvider>
+  );
 }
 
 export default App;

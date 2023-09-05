@@ -1,7 +1,51 @@
-import React from "react";
+import { createContext, useState } from "react";
 
-function AuthContext() {
-  return <div>AuthContext</div>;
-}
+import { auth } from "../services/firebase.js";
 
-export default AuthContext;
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  getAuth,
+  signOut,
+} from "firebase/auth";
+
+export const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
+
+  async function signUp(email, password, confirmPassword) {
+    try {
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (user) {
+        setUser(user);
+        setIsLoggedIn(true);
+        console.log(user);
+        console.log(isLoggedIn);
+        console.log("sign up successful");
+      }
+    } catch (error) {
+      console.error(error.code);
+      console.error(error);
+    }
+  }
+
+  const providerValue = {
+    signUp,
+    user,
+    isLoggedIn,
+  };
+
+  return (
+    <AuthContext.Provider value={providerValue}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
