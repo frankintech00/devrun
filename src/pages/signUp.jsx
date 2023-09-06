@@ -1,36 +1,33 @@
 import { useContext, useState } from "react";
-import { AuthContext } from "../context/AuthContext.jsx";
+import { AuthContext } from "../context/AuthContext";
 
 function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { signIn, signInWithGoogle } = useContext(AuthContext);
 
-  const { signUp } = useContext(AuthContext);
+  const handleSignIn = () => {
+    signIn(email, password);
+  };
 
-  const handleSignUp = () => {
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-    signUp(email, password, confirmPassword);
+  const handleSignInWithGoogle = () => {
+    signInWithGoogle();
   };
 
   return (
     <div className="flex flex-col items-center h-screen mt-10 text-primary">
-      <div className="w-full max-w-md p-6 rounded-lg shadow-2xl lg:max-w-xl">
+      <div className="w-full max-w-md p-6 lg:max-w-xl rounded-lg shadow-2xl ">
         <h1 className="mb-6 text-3xl font-semibold text-center">
-          Create an Account
+          Sign in to your account.
         </h1>
         <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
           <div>
-            <label className="label" htmlFor="email">
-              <span className="text-primary text-lg">Email</span>
+            <label htmlFor="email" className="label">
+              <span className="text-primary text-lg label-text">Email</span>
             </label>
             <input
               required
               type="email"
-              id="email"
               name="email"
               placeholder="Email Address"
               className="w-full input input-bordered input-primary"
@@ -38,37 +35,35 @@ function SignUp() {
             />
           </div>
           <div>
-            <label className="label" htmlFor="password">
-              <span className="text-primary text-lg">Password</span>
+            <label htmlFor="email" className="label">
+              <span className="text-primary text-lg label-text">Password</span>
             </label>
             <input
               required
               type="password"
-              id="password"
               name="password"
               placeholder="Password"
               className="w-full input input-bordered input-primary"
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          <div></div>
           <div>
-            <input
-              required
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              className="w-full input input-bordered input-primary"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+            <button
+              type="button"
+              className="shadow-md btn btn-block btn-primary"
+              onClick={handleSignIn}
+            >
+              Sign In.
+            </button>
           </div>
           <div>
             <button
               type="button"
-              className="flex items-center justify-center shadow-md btn btn-block btn-primary"
-              onClick={handleSignUp}
+              className="btn btn-block bg-white text-[#4285F4] flex items-center justify-center shadow-md"
+              onClick={handleSignInWithGoogle}
             >
-              Create Account
+              Continue with Google
             </button>
           </div>
         </form>
