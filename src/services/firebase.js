@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_APP_ID,
+  apiKey: "AIzaSyA76_i0w5jlFrO2O_GYD1FuZe8jyEmuJJM",
+  authDomain: "fps-projects.firebaseapp.com",
+  projectId: "fps-projects",
+  storageBucket: "fps-projects.appspot.com",
+  messagingSenderId: "83998329168",
+  appId: "1:83998329168:web:6de470f0881c0692dbc455",
 };
 
 const app = initializeApp(firebaseConfig);
