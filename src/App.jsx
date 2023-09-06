@@ -1,6 +1,6 @@
 import React from "react";
 import SignIn from "./pages/SignIn";
-// import SignUp from "./pages/SignUp";
+import SignUp from "./pages/SignUp";
 import Test from "./pages/Test";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -9,7 +9,7 @@ function App() {
     <AuthProvider>
       <h1>App</h1>
       <Test />
-      {/* <SignUp /> */}
+      <SignUp />
       <SignIn />
     </AuthProvider>
   );

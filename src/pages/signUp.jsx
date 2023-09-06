@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext.jsx";
 
-const SignUp = () => {
+function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -75,6 +75,6 @@ const SignUp = () => {
       </div>
     </div>
   );
-};
+}
 
 export default SignUp;
