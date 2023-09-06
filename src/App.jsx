@@ -7,8 +7,8 @@ function App() {
   return (
     <AuthProvider>
       <h1>App</h1>
-      <SignUp />;
-      <SignIn />;
+      <SignUp />
+      <SignIn />
     </AuthProvider>
   );
 }
