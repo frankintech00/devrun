@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   async function addUserToFirestore(user) {
-    const userRef = doc(db, "Users", user.uid);
+    const userRef = doc(db, "users", user.uid);
     const userObj = {
       userID: user.uid,
       email: user.email,

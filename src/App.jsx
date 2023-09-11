@@ -1,11 +1,13 @@
-import React from "react";
-import SignUpUser from "./pages/auth/SignUpUser.jsx";
 import { AuthProvider } from "./context/AuthContext";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./routes/Routes.jsx";
 
 function App() {
   return (
     <AuthProvider>
-      <SignUpUser />
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
     </AuthProvider>
   );
 }
