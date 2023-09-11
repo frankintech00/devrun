@@ -1,6 +1,8 @@
 import { createContext, useState, useEffect } from "react";
 
 import { auth } from "../services/firebase.js";
+import { db } from "../services/firebase.js";
+import { doc, setDoc, collection, addDoc } from "firebase/firestore";
 
 import {
   createUserWithEmailAndPassword,
@@ -18,7 +20,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(null);
 
-  async function signUp(email, password, confirmPassword) {
+  async function signUp(email, password) {
     try {
       const { user } = await createUserWithEmailAndPassword(
         auth,
@@ -28,9 +30,7 @@ export const AuthProvider = ({ children }) => {
       if (user) {
         setUser(user);
         setIsLoggedIn(true);
-        console.log(user);
-        console.log(isLoggedIn);
-        console.log("sign up successful");
+        await addUserToFirestore(user);
       }
     } catch (error) {
       console.error(error.code);
@@ -42,9 +42,10 @@ export const AuthProvider = ({ children }) => {
     const provider = new GoogleAuthProvider();
     try {
       const { user } = await signInWithPopup(auth, provider);
-      setUser(user);
-      console.log("User Signed In with Google successfully.");
-      console.log({ user });
+      if (user) {
+        setUser(user);
+        await addUserToFirestore(user);
+      }
     } catch (error) {
       console.error(error.code);
       console.error(error);
@@ -57,13 +58,36 @@ export const AuthProvider = ({ children }) => {
       if (user) {
         setUser(user);
         setIsLoggedIn(true);
-        console.log(user);
-        console.log(isLoggedIn);
-        console.log("sign in successful");
+        await addUserToFirestore(user);
       }
     } catch (error) {
       console.error(error.code);
       console.error(error);
+    }
+  }
+
+  async function addUserToFirestore(user) {
+    const userRef = doc(db, "Users", user.uid);
+    const userObj = {
+      userID: user.uid,
+      email: user.email,
+      name: user.displayName || "Anonymous",
+      role: "user",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      favourites: [],
+      shoppingBasket: [],
+    };
+    await setDoc(userRef, userObj);
+  }
+
+  async function signOutUser() {
+    try {
+      await signOut(auth);
+      setUser(null);
+      setIsLoggedIn(false);
+    } catch (error) {
+      console.error("Error signing out: ", error);
     }
   }
 
@@ -80,6 +104,7 @@ export const AuthProvider = ({ children }) => {
     signUp,
     signIn,
     signInWithGoogle,
+    signOutUser,
     user,
     isLoggedIn,
   };
