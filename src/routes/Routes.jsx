@@ -9,7 +9,7 @@ import UserProfile from "../pages/auth/UserProfile.jsx";
 function AppRoutes() {
   return (
     <Router>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<SignUpUser />} />
       <Route path="/signup" element={<SignUpUser />} />
       <Route
         path="/userprofile/:id"

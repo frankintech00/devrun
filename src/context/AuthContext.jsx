@@ -1,24 +1,41 @@
 import { createContext, useState, useEffect } from "react";
-
-import { auth } from "../services/firebase.js";
-import { db } from "../services/firebase.js";
-import { doc, setDoc, collection, addDoc } from "firebase/firestore";
-
+import { auth, db } from "../services/firebase.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
-  getAuth,
+  sendPasswordResetEmail,
   signOut,
 } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [error, setError] = useState(null);
+  const isLoggedIn = Boolean(user);
+
+  async function addUserToFirestore(user) {
+    try {
+      const userRef = doc(db, "Users", user.uid);
+      const userObj = {
+        userID: user.uid,
+        email: user.email,
+        name: user.displayName || "Anonymous",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        recentlyViewed: [],
+        shoppingBasket: [],
+      };
+      await setDoc(userRef, userObj);
+    } catch (error) {
+      setError(`Failed to add user to Firestore: ${error.message}`);
+      console.error(error);
+    }
+  }
 
   async function signUp(email, password) {
     try {
@@ -29,11 +46,10 @@ export const AuthProvider = ({ children }) => {
       );
       if (user) {
         setUser(user);
-        setIsLoggedIn(true);
         await addUserToFirestore(user);
       }
     } catch (error) {
-      console.error(error.code);
+      setError(error.message);
       console.error(error);
     }
   }
@@ -47,7 +63,7 @@ export const AuthProvider = ({ children }) => {
         await addUserToFirestore(user);
       }
     } catch (error) {
-      console.error(error.code);
+      setError(error.message);
       console.error(error);
     }
   }
@@ -57,36 +73,30 @@ export const AuthProvider = ({ children }) => {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       if (user) {
         setUser(user);
-        setIsLoggedIn(true);
         await addUserToFirestore(user);
       }
     } catch (error) {
-      console.error(error.code);
+      setError(error.message);
       console.error(error);
     }
   }
 
-  async function addUserToFirestore(user) {
-    const userRef = doc(db, "users", user.uid);
-    const userObj = {
-      userID: user.uid,
-      email: user.email,
-      name: user.displayName || "Anonymous",
-      role: "user",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      favourites: [],
-      shoppingBasket: [],
-    };
-    await setDoc(userRef, userObj);
+  async function forgotPassword(email) {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      console.log("Password reset email sent");
+    } catch (error) {
+      setError(error.message);
+      console.error("Error sending password reset email: ", error);
+    }
   }
 
   async function signOutUser() {
     try {
       await signOut(auth);
       setUser(null);
-      setIsLoggedIn(false);
     } catch (error) {
+      setError(error.message);
       console.error("Error signing out: ", error);
     }
   }
@@ -94,6 +104,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      console.log("user: ", user);
+      console.log("isLoggedIn: ", isLoggedIn);
     });
     return () => {
       unsubscribe();
@@ -104,9 +116,11 @@ export const AuthProvider = ({ children }) => {
     signUp,
     signIn,
     signInWithGoogle,
+    forgotPassword,
     signOutUser,
     user,
     isLoggedIn,
+    error,
   };
 
   return (
