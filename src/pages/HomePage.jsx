@@ -1,7 +1,9 @@
-import React from "react";
+// Purpose: Home Page component for the application
+
+import Header from "../sections/header/Header";
 
 function HomePage() {
-  return <div>HomePage</div>;
+  return <Header />;
 }
 
 export default HomePage;
